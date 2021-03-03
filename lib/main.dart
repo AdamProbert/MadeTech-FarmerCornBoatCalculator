@@ -8,6 +8,11 @@ void main() {
 final title = 'Martin Transport Cost Calculator';
 final currencyFormatter = new NumberFormat("£#,##0.00", "en_GB");
 
+int intOrStringValue(dynamic o) {
+  if (o is String) o = int.tryParse(o);
+  return o ?? 0;
+}
+
 Map<int, Color> color = {
   50: Color.fromRGBO(226, 88, 34, .1),
   100: Color.fromRGBO(226, 88, 34, .2),
@@ -67,30 +72,55 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final myController = TextEditingController();
+  final cornCountTextController = TextEditingController();
+  final gooseCountTextController = TextEditingController();
 
-  int _counter = 0;
+  bool _costCalculated = false;
   num _cost = 0.0;
-
-  void _incrementCounter() {
-    setState(() {});
-    // This call to setState tells the Flutter framework that something has
-    // changed in this State, which causes it to rerun the build method below
-    // so that the display can reflect the updated values. If we changed
-    // _counter without calling setState(), then the build method would not be
-    // called again, and so nothing would appear to happen.
-    _counter++;
-  }
 
   void _calculateTransportCost() {
     setState(() {});
+    this._costCalculated = false;
 
-    if (myController.text == '') {
+    int cornCount = intOrStringValue(cornCountTextController.text);
+    int gooseCount = intOrStringValue(gooseCountTextController.text);
+
+    if ((gooseCount > 2 && cornCount > 0) || (cornCount > 2 && cornCount > 0)) {
       this._cost = 0;
+      this._showMyDialog(gooseCount > 2, cornCount > 2);
       return;
     }
 
-    this._cost = (int.parse(myController.text) * 0.25) * 2;
+    this._costCalculated = true;
+    this._cost = ((cornCount * 0.25) * 2) + ((gooseCount * 0.25) * 2);
+  }
+
+  Future<void> _showMyDialog(bool tooManyGeese, bool tooMuchCorn) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Geese in the Corn'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                if (tooManyGeese) Text('You have too many Geese vs Corn'),
+                if (tooMuchCorn) Text('You have too much Corn vs Geese'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Approve'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -137,18 +167,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image(image: AssetImage('assets/images/Wheat.jpg')),
                 )),
+            if (this._costCalculated)
+              Text(
+                'Travel Cost: ${currencyFormatter.format(this._cost)}',
+                style: Theme.of(context).textTheme.headline4,
+              ),
             TextField(
-              controller: myController,
+              controller: cornCountTextController,
               decoration: InputDecoration(
                 hintText: 'Number of corn bags',
+                labelText: 'Corn',
               ),
               keyboardType: TextInputType.number,
               style: Theme.of(context).textTheme.headline4,
             ),
             TextField(
-              // controller: myController,
+              controller: gooseCountTextController,
               decoration: InputDecoration(
                 hintText: 'Number of geese',
+                labelText: 'Geese',
               ),
               keyboardType: TextInputType.number,
               style: Theme.of(context).textTheme.headline4,
@@ -168,11 +205,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            if (this._cost > 0)
-              Text(
-                'Travel Cost: ${currencyFormatter.format(this._cost)}',
-                style: Theme.of(context).textTheme.headline4,
-              ),
           ],
         ),
       ),
