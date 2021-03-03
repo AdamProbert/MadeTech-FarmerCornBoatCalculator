@@ -53,8 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
-    setState(() {
-    });
+    setState(() {});
     // This call to setState tells the Flutter framework that something has
     // changed in this State, which causes it to rerun the build method below
     // so that the display can reflect the updated values. If we changed
@@ -104,6 +103,26 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
+            ),
+            TextField(
+                decoration: InputDecoration(
+                  hintText: 'Enter number of corn bags',
+                ),
+                keyboardType: TextInputType.number),
+            FlatButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  side: BorderSide(color: Colors.green)),
+              color: Colors.white,
+              textColor: Colors.red,
+              padding: EdgeInsets.all(8.0),
+              onPressed: () {},
+              child: Text(
+                "Add to Cart".toUpperCase(),
+                style: TextStyle(
+                  fontSize: 14.0,
+                ),
+              ),
             ),
           ],
         ),
