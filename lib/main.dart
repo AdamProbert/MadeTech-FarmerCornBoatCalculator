@@ -96,7 +96,21 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image(image: AssetImage('assets/images/Wheat.jpg')),
+            Container(
+              padding: EdgeInsets.all(0),
+              margin: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: Colors.brown,
+                  width: 10,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image(image: AssetImage('assets/images/Wheat.jpg')),
+                )
+              ),
             Text(
               'The duck say:',
             ),
