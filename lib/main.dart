@@ -50,17 +50,30 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final myController = TextEditingController();
+
   int _counter = 0;
+  num _cost = 0.0;
 
   void _incrementCounter() {
-    setState(() {
-    });
+    setState(() {});
     // This call to setState tells the Flutter framework that something has
     // changed in this State, which causes it to rerun the build method below
     // so that the display can reflect the updated values. If we changed
     // _counter without calling setState(), then the build method would not be
     // called again, and so nothing would appear to happen.
     _counter++;
+  }
+
+  void _calculateTransportCost(numberOfBags) {
+    setState(() {});
+
+    if (numberOfBags == '') {
+      this._cost = 0;
+      return;
+    }
+
+    this._cost = (int.parse(numberOfBags) * 0.25) * 2;
   }
 
   @override
@@ -98,35 +111,50 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(0),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                  color: Colors.brown,
-                  width: 10,
+                padding: EdgeInsets.all(0),
+                margin: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: Colors.brown,
+                    width: 10,
+                  ),
                 ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image(image: AssetImage('assets/images/Wheat.jpg')),
+                )),
+            TextField(
+              controller: myController,
+              decoration: InputDecoration(
+                hintText: 'Number of corn bags',
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image(image: AssetImage('assets/images/Wheat.jpg')),
-                )
-              ),
-            Text(
-              'The duck say:',
+              keyboardType: TextInputType.number,
+              style: Theme.of(context).textTheme.headline4,
+              onChanged: _calculateTransportCost,
             ),
+            // FlatButton(
+            //   shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(10.0),
+            //       side: BorderSide(color: Colors.green)),
+            //   color: Colors.green,
+            //   textColor: Colors.white,
+            //   padding: EdgeInsets.all(8.0),
+            //
+            //   child: Text(
+            //     "Calculate".toUpperCase(),
+            //     style: TextStyle(
+            //       fontSize: 14.0,
+            //     ),
+            //   ),
+            // ),
             Text(
-              '$_counter',
+              'Travel Cost: $_cost',
               style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
