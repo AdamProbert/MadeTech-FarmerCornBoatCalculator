@@ -26,6 +26,14 @@ Map<int, Color> color = {
   900: Color.fromRGBO(226, 88, 34, 1),
 };
 
+class FarmerColors {
+  static const light_green = 0xff82E080;
+  static const orange = 0xffe35922;
+  static const brown = 0xff755E54;
+  static const red = 0xffDB464B;
+  static const dark_green = 0xffDB464B;
+}
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -42,7 +50,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: MaterialColor(0xffe25822, color),
+        primarySwatch: MaterialColor(FarmerColors.orange, color),
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
         // closer together (more dense) than on mobile platforms.
@@ -86,7 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
     int gooseCount = intOrStringValue(gooseCountTextController.text);
 
     if ((gooseCount > 2 && cornCount > 0) || (cornCount > 2 && cornCount > 0)) {
-      this._cost = 0;
       this._showMyDialog(gooseCount > 2, cornCount > 2);
       return;
     }
@@ -157,16 +164,17 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Container(
-                padding: EdgeInsets.all(0),
-                margin: EdgeInsets.all(30),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
+            AspectRatio(
+              aspectRatio: 487 / 451,
+              child: new Container(
+                decoration: new BoxDecoration(
+                  image: new DecorationImage(
+                      fit: BoxFit.fitWidth,
+                      alignment: FractionalOffset.topCenter,
+                      image: new AssetImage('assets/images/Wheat.jpg')),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image(image: AssetImage('assets/images/Wheat.jpg')),
-                )),
+              ),
+            ),
             if (this._costCalculated)
               Text(
                 'Travel Cost: ${currencyFormatter.format(this._cost)}',
