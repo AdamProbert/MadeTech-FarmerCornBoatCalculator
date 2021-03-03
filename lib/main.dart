@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             AspectRatio(
-              aspectRatio: 487 / 451,
+              aspectRatio: 1000 / 451,
               child: new Container(
                 decoration: new BoxDecoration(
                   image: new DecorationImage(
