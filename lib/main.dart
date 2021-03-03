@@ -5,7 +5,7 @@ void main() {
   runApp(MyApp());
 }
 
-final title = 'Martin Transport Cost Calculator';
+final title = 'Morten Transport Cost Calculator';
 final currencyFormatter = new NumberFormat("£#,##0.00", "en_GB");
 
 Map<int, Color> color = {
