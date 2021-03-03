@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MyApp());
 }
+
+final currencyFormatter = new NumberFormat("£#,##0.00", "en_GB");
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -149,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //   ),
             // ),
             Text(
-              'Travel Cost: $_cost',
+              'Travel Cost: ${currencyFormatter.format(this._cost)}',
               style: Theme.of(context).textTheme.headline4,
             ),
           ],
