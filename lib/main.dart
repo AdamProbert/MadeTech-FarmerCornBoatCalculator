@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'C4 Corn Crossing Cost Calculator'),
+      home: MyHomePage(title: 'Martin Transport Cost Calculator'),
     );
   }
 }
@@ -68,15 +68,15 @@ class _MyHomePageState extends State<MyHomePage> {
     _counter++;
   }
 
-  void _calculateTransportCost(numberOfBags) {
+  void _calculateTransportCost() {
     setState(() {});
 
-    if (numberOfBags == '') {
+    if (myController.text == '') {
       this._cost = 0;
       return;
     }
 
-    this._cost = (int.parse(numberOfBags) * 0.25) * 2;
+    this._cost = (int.parse(myController.text) * 0.25) * 2;
   }
 
   @override
@@ -134,24 +134,23 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               keyboardType: TextInputType.number,
               style: Theme.of(context).textTheme.headline4,
-              onChanged: _calculateTransportCost,
             ),
-            // FlatButton(
-            //   shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(10.0),
-            //       side: BorderSide(color: Colors.green)),
-            //   color: Colors.green,
-            //   textColor: Colors.white,
-            //   padding: EdgeInsets.all(8.0),
-            //
-            //   child: Text(
-            //     "Calculate".toUpperCase(),
-            //     style: TextStyle(
-            //       fontSize: 14.0,
-            //     ),
-            //   ),
-            // ),
-            Text(
+            FlatButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  side: BorderSide(color: Colors.green)),
+              color: Colors.green,
+              textColor: Colors.white,
+              padding: EdgeInsets.all(8.0),
+              onPressed: _calculateTransportCost,
+              child: Text(
+                "Calculate".toUpperCase(),
+                style: TextStyle(
+                  fontSize: 14.0,
+                ),
+              ),
+            ),
+            if (this._cost > 0) Text(
               'Travel Cost: ${currencyFormatter.format(this._cost)}',
               style: Theme.of(context).textTheme.headline4,
             ),
