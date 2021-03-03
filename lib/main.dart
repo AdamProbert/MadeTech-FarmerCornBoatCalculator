@@ -4,6 +4,20 @@ void main() {
   runApp(MyApp());
 }
 
+Map<int, Color> color =
+{
+  50:Color.fromRGBO(226, 88, 34, .1),
+  100:Color.fromRGBO(226, 88, 34, .2),
+  200:Color.fromRGBO(226, 88, 34, .3),
+  300:Color.fromRGBO(226, 88, 34, .4),
+  400:Color.fromRGBO(226, 88, 34, .5),
+  500:Color.fromRGBO(226, 88, 34, .6),
+  600:Color.fromRGBO(226, 88, 34, .7),
+  700:Color.fromRGBO(226, 88, 34, .8),
+  800:Color.fromRGBO(226, 88, 34, .9),
+  900:Color.fromRGBO(226, 88, 34, 1),
+};
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -20,7 +34,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.green,
+        primarySwatch: MaterialColor(0xffe25822, color),
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
         // closer together (more dense) than on mobile platforms.
@@ -108,17 +122,13 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
                 padding: EdgeInsets.all(0),
-                margin: EdgeInsets.all(20),
+                margin: EdgeInsets.all(30),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(
-                    color: Colors.brown,
-                    width: 10,
-                  ),
+                  borderRadius: BorderRadius.circular(50),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
