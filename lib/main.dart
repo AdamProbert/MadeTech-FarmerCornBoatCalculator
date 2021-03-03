@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-Map<int, Color> color =
-{
-  50:Color.fromRGBO(226, 88, 34, .1),
-  100:Color.fromRGBO(226, 88, 34, .2),
-  200:Color.fromRGBO(226, 88, 34, .3),
-  300:Color.fromRGBO(226, 88, 34, .4),
-  400:Color.fromRGBO(226, 88, 34, .5),
-  500:Color.fromRGBO(226, 88, 34, .6),
-  600:Color.fromRGBO(226, 88, 34, .7),
-  700:Color.fromRGBO(226, 88, 34, .8),
-  800:Color.fromRGBO(226, 88, 34, .9),
-  900:Color.fromRGBO(226, 88, 34, 1),
+final title = 'Martin Transport Cost Calculator';
+final currencyFormatter = new NumberFormat("£#,##0.00", "en_GB");
+
+Map<int, Color> color = {
+  50: Color.fromRGBO(226, 88, 34, .1),
+  100: Color.fromRGBO(226, 88, 34, .2),
+  200: Color.fromRGBO(226, 88, 34, .3),
+  300: Color.fromRGBO(226, 88, 34, .4),
+  400: Color.fromRGBO(226, 88, 34, .5),
+  500: Color.fromRGBO(226, 88, 34, .6),
+  600: Color.fromRGBO(226, 88, 34, .7),
+  700: Color.fromRGBO(226, 88, 34, .8),
+  800: Color.fromRGBO(226, 88, 34, .9),
+  900: Color.fromRGBO(226, 88, 34, 1),
 };
 
 class FarmerColors {
@@ -31,7 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Corn Crossing Cost Calculator',
+      title: title,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -48,7 +51,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'C4 Corn Crossing Cost Calculator'),
+      home: MyHomePage(title: title),
     );
   }
 }
@@ -87,15 +90,15 @@ class _MyHomePageState extends State<MyHomePage> {
     _counter++;
   }
 
-  void _calculateTransportCost(numberOfBags) {
+  void _calculateTransportCost() {
     setState(() {});
 
-    if (numberOfBags == '') {
+    if (myController.text == '') {
       this._cost = 0;
       return;
     }
 
-    this._cost = (int.parse(numberOfBags) * 0.25) * 2;
+    this._cost = (int.parse(myController.text) * 0.25) * 2;
   }
 
   @override
@@ -152,8 +155,35 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               keyboardType: TextInputType.number,
               style: Theme.of(context).textTheme.headline4,
-              onChanged: _calculateTransportCost,
             ),
+            TextField(
+              // controller: myController,
+              decoration: InputDecoration(
+                hintText: 'Number of geese',
+              ),
+              keyboardType: TextInputType.number,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            FlatButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  side: BorderSide(color: Colors.green)),
+              color: Colors.green,
+              textColor: Colors.white,
+              padding: EdgeInsets.all(8.0),
+              onPressed: _calculateTransportCost,
+              child: Text(
+                "Calculate".toUpperCase(),
+                style: TextStyle(
+                  fontSize: 14.0,
+                ),
+              ),
+            ),
+            if (this._cost > 0)
+              Text(
+                'Travel Cost: ${currencyFormatter.format(this._cost)}',
+                style: Theme.of(context).textTheme.headline4,
+              ),
             FlatButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
