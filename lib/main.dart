@@ -104,11 +104,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
                   color: Colors.brown,
-                  width: 15,
+                  width: 10,
                 ),
               ),
-              child: Image(image: AssetImage('assets/images/Wheat.jpg')),
-            ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image(image: AssetImage('assets/images/Wheat.jpg')),
+                )
+              ),
             Text(
               'The duck say:',
             ),
