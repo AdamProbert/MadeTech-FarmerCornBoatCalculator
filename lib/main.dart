@@ -305,6 +305,7 @@ class _MyHomePageState extends State<MyHomePage> {
               textColor: Colors.white,
               padding: EdgeInsets.all(8.0),
               onPressed: _updateTransportInformation,
+              highlightColor: Color(FarmerColors.light_green),
               child: Text("Calculate".toUpperCase(),
                   style: TextStyle(
                     fontSize: 20.0,
