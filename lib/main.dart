@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -251,7 +252,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   image: new DecorationImage(
                       fit: BoxFit.fitWidth,
                       alignment: FractionalOffset.topCenter,
-                      image: new AssetImage('assets/images/Wheat.jpg')),
+                      image: new AssetImage('assets/images/banner.png')),
                 ),
               ),
             ),
@@ -265,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 SizedBox(
-                  width: 10.0,
+                  width: 20.0,
                 ),
                 new Flexible(
                   child: TextField(
@@ -275,6 +276,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       labelText: 'Corn',
                     ),
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
@@ -289,17 +291,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       labelText: 'Geese',
                     ),
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
                 SizedBox(
-                  width: 10.0,
+                  width: 20.0,
                 ),
               ],
             ),
             FlatButton(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(5.0),
                   side: BorderSide(color: Color(FarmerColors.dark_green))),
               color: Color(FarmerColors.dark_green),
               textColor: Colors.white,
@@ -324,7 +327,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 height: 30.0,
                                 width: 30.0, // fixed width and height
                                 child: getIcon(steps[index])
-                            )
+                            ),
                         ),
                       );
                     },
