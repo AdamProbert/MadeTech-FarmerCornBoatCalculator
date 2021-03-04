@@ -5,12 +5,39 @@ void main() {
   runApp(MyApp());
 }
 
+final returnCost = 0.25;
+final cornCostPerTrip = 0.25;
+final cornPerTrip = 1;
+final gooseCostPerTrip = 0.25;
+final goosePerTrip = 1;
 final title = 'Morten Transport Cost Calculator';
 final currencyFormatter = new NumberFormat("£#,##0.00", "en_GB");
 
 int intOrStringValue(dynamic o) {
   if (o is String) o = int.tryParse(o);
   return o ?? 0;
+}
+
+bool tooManyGeese(num gooseCount, num cornCount) {
+  return (gooseCount >= 2 && cornCount > 0);
+}
+
+bool tooMuchCorn(num cornCount, num gooseCount) {
+  return (cornCount >= 2 && gooseCount > 0);
+}
+
+num calculateGooseCost(num gooseCount) {
+  num gooseTrips = (gooseCount / goosePerTrip).ceil();
+  return ((gooseTrips * gooseCostPerTrip) + (gooseTrips * returnCost));
+}
+
+num calculateCornCost(num cornCount) {
+  num cornTrips = (cornCount / cornPerTrip).ceil();
+  return ((cornTrips * cornCostPerTrip) + (cornTrips * returnCost));
+}
+
+num calculateCost(gooseCount, cornCount) {
+  return calculateGooseCost(gooseCount) + calculateCornCost(cornCount);
 }
 
 Map<int, Color> color = {
@@ -93,13 +120,18 @@ class _MyHomePageState extends State<MyHomePage> {
     int cornCount = intOrStringValue(cornCountTextController.text);
     int gooseCount = intOrStringValue(gooseCountTextController.text);
 
-    if ((gooseCount > 2 && cornCount > 0) || (cornCount > 2 && cornCount > 0)) {
-      this._showMyDialog(gooseCount > 2, cornCount > 2);
+    bool tooManyGeeseResult = tooManyGeese(gooseCount, cornCount);
+    bool tooMuchCornResult =  tooMuchCorn(cornCount, gooseCount);
+
+    if (tooManyGeeseResult || tooMuchCornResult) {
+      this._showMyDialog(tooManyGeeseResult, tooMuchCornResult);
       return;
     }
 
-    this._costCalculated = true;
-    this._cost = ((cornCount * 0.25) * 2) + ((gooseCount * 0.25) * 2);
+    this._cost = calculateCost(gooseCount, cornCount);
+    if (this._cost > 0) {
+      this._costCalculated = true;
+    }
   }
 
   Future<void> _showMyDialog(bool tooManyGeese, bool tooMuchCorn) async {
