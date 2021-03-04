@@ -29,23 +29,29 @@ int intOrStringValue(dynamic o) {
 }
 
 bool tooManyGeese(num gooseCount, num cornCount, num rhinoCount) {
-  return (gooseCount > 2 && (cornCount > 0 || rhinoCount > 0)) || (gooseCount == 2 && (cornCount == 2 || rhinoCount == 2));
+  return (gooseCount > 2 && (cornCount > 0 || rhinoCount > 0)) ||
+      (gooseCount == 2 && (cornCount == 2 || rhinoCount == 2));
 }
 
 bool tooMuchCorn(num cornCount, num gooseCount) {
-  return (cornCount > 2 && gooseCount > 0) || (gooseCount == 2 && cornCount == 2);
+  return (cornCount > 2 && gooseCount > 0) ||
+      (gooseCount == 2 && cornCount == 2);
 }
 
 bool tooManyRhino(num rhinoCount, num gooseCount) {
-  return (rhinoCount > 2 && gooseCount > 0) || (gooseCount == 2 && rhinoCount == 2);
+  return (rhinoCount > 2 && gooseCount > 0) ||
+      (gooseCount == 2 && rhinoCount == 2);
 }
 
 bool validPassengers(num cornCount, num gooseCount, num rhinoCount) {
-  if ((gooseCount > 0 && cornCount > 0 && rhinoCount > 0) && (cornCount > 1 || gooseCount > 1 || rhinoCount > 1)) {
+  if ((gooseCount > 0 && cornCount > 0 && rhinoCount > 0) &&
+      (cornCount > 1 || gooseCount > 1 || rhinoCount > 1)) {
     return false;
   }
 
-  return !tooManyGeese(gooseCount, cornCount, rhinoCount) && !tooMuchCorn(cornCount, gooseCount) && !tooManyRhino(rhinoCount, gooseCount);
+  return !tooManyGeese(gooseCount, cornCount, rhinoCount) &&
+      !tooMuchCorn(cornCount, gooseCount) &&
+      !tooManyRhino(rhinoCount, gooseCount);
 }
 
 num calculateGooseCost(num gooseCount) {
@@ -64,52 +70,57 @@ num calculateRhinoCost(num rhinoCount) {
 }
 
 num calculateCostSimple(gooseCount, cornCount, rhinoCount) {
-  return calculateGooseCost(gooseCount) + calculateCornCost(cornCount) + calculateRhinoCost(rhinoCount);
+  return calculateGooseCost(gooseCount) +
+      calculateCornCost(cornCount) +
+      calculateRhinoCost(rhinoCount);
 }
 
 Image getIcon(String step) {
   if (step.contains("corn")) {
     return Image.asset("assets/images/grain.png");
-  }
-  else if (step.contains("goose")) {
+  } else if (step.contains("goose")) {
     return Image.asset("assets/images/goose.png");
-  }
-  else if (step.contains("rhino")) {
+  } else if (step.contains("rhino")) {
     return Image.asset("assets/images/rhino.png");
-  }
-  else if(step.contains("nothing")){
+  } else if (step.contains("nothing")) {
     return Image.asset(("assets/images/boat.png"));
   }
   return null;
 }
 
-enum TransferItem {
-  Nothing,
-  Corn,
-  Goose,
-  Rhino,
-  Farmer
-}
+enum TransferItem { Nothing, Corn, Goose, Rhino, Farmer }
 
 String transferItemToString(TransferItem itemType) {
-  switch(itemType) {
-    case TransferItem.Nothing: return 'Nothing';
-    case TransferItem.Corn: return 'Corn';
-    case TransferItem.Goose: return 'Goose';
-    case TransferItem.Rhino: return 'Rhino';
-    case TransferItem.Farmer: return 'Farmer';
-    default: return 'Unknown';
+  switch (itemType) {
+    case TransferItem.Nothing:
+      return 'Nothing';
+    case TransferItem.Corn:
+      return 'Corn';
+    case TransferItem.Goose:
+      return 'Goose';
+    case TransferItem.Rhino:
+      return 'Rhino';
+    case TransferItem.Farmer:
+      return 'Farmer';
+    default:
+      return 'Unknown';
   }
 }
 
 Image transferItemToIcon(TransferItem itemType) {
-  switch(itemType) {
-    case TransferItem.Nothing: return Image.asset(("assets/images/boat.png"));
-    case TransferItem.Corn: return Image.asset("assets/images/grain.png");
-    case TransferItem.Goose: return Image.asset("assets/images/goose.png");
-    case TransferItem.Rhino: return Image.asset("assets/images/rhino.png");
-    case TransferItem.Farmer: return Image.asset("assets/images/farmer.png");
-    default: return Image.asset(("assets/images/boat.png"));
+  switch (itemType) {
+    case TransferItem.Nothing:
+      return Image.asset(("assets/images/boat.png"));
+    case TransferItem.Corn:
+      return Image.asset("assets/images/grain.png");
+    case TransferItem.Goose:
+      return Image.asset("assets/images/goose.png");
+    case TransferItem.Rhino:
+      return Image.asset("assets/images/rhino.png");
+    case TransferItem.Farmer:
+      return Image.asset("assets/images/farmer.png");
+    default:
+      return Image.asset(("assets/images/boat.png"));
   }
 }
 
@@ -119,10 +130,9 @@ String scheduleEntryToString(TransferItem itemType, num index) {
   }
 
   String prefix = '';
-  if((index % 2) > 0) {
+  if ((index % 2) > 0) {
     prefix = 'Return with ';
-  }
-  else {
+  } else {
     prefix = 'Take ';
   }
   return prefix + transferItemToString(itemType);
@@ -203,6 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<TransferItem> _steps = [];
 
   void _updateTransportInformation() {
+    FocusScope.of(context).unfocus(); // Close keyboard
     setState(() {});
     _steps = [];
 
@@ -310,21 +321,20 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _showErrorMessage(num cornCount, num gooseCount, num rhinoCount) async {
+  Future<void> _showErrorMessage(
+      num cornCount, num gooseCount, num rhinoCount) async {
     String text = '';
-    if ((gooseCount > 0 && cornCount > 0 && rhinoCount > 0) && (cornCount > 1 || gooseCount > 1 || rhinoCount > 1)) {
-      text = 'You can only take 1 of each Goose, Cron and Rhino when taken together';
-    }
-    else if (tooManyGeese(gooseCount, cornCount, rhinoCount)) {
+    if ((gooseCount > 0 && cornCount > 0 && rhinoCount > 0) &&
+        (cornCount > 1 || gooseCount > 1 || rhinoCount > 1)) {
+      text =
+          'You can only take 1 of each Goose, Corn and Rhino when taken together';
+    } else if (tooManyGeese(gooseCount, cornCount, rhinoCount)) {
       text = 'You have too many Geese in your party';
-    }
-    else if (tooMuchCorn(cornCount, gooseCount)) {
+    } else if (tooMuchCorn(cornCount, gooseCount)) {
       text = 'You have too much Corn in your party';
-    }
-    else if (tooManyRhino(rhinoCount, gooseCount)) {
-      text = 'The angry Rhrino(s) does not like your Geese';
-    }
-    else {
+    } else if (tooManyRhino(rhinoCount, gooseCount)) {
+      text = 'The angry Rhino(s) does not like your Geese';
+    } else {
       text = 'Something has gone wrong';
     }
 
@@ -336,9 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text('Geese in the Corn'),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[
-                Text(text)
-              ],
+              children: <Widget>[Text(text)],
             ),
           ),
           actions: <Widget>[
@@ -480,25 +488,42 @@ class _MyHomePageState extends State<MyHomePage> {
                     fontSize: 20.0,
                   )),
             ),
-            Expanded(
-                child: new ListView.builder
-                  (
-                    itemCount: _steps.length,
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      return Card(
-                        color: (index % 2 == 0) ? Color(FarmerColors.orange) : Color(FarmerColors.dark_green),
-                        child: ListTile(
-                          title: Text((index+1).toString() + ": " + scheduleEntryToString(_steps[index], index), style: TextStyle(color: Colors.white)),
-                            leading: SizedBox(
-                                height: 30.0,
-                                width: 30.0, // fixed width and height
-                                child: transferItemToIcon(_steps[index])
-                            ),
-                        ),
-                      );
-                    },
+            if ((_steps.isEmpty) && (this._cost > 0))
+              Expanded(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 20),
+                      Text("Go nuts".toUpperCase(), style: Theme.of(context).textTheme.headline5),
+                      SizedBox(height: 20),
+                      Image.asset('assets/images/nuts.gif')
+                    ],
                   ),
+              )
+            else
+              Expanded(
+                child: new ListView.builder(
+                  itemCount: _steps.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return Card(
+                      color: (index % 2 == 0)
+                          ? Color(FarmerColors.orange)
+                          : Color(FarmerColors.dark_green),
+                      child: ListTile(
+                        title: Text(
+                            (index + 1).toString() +
+                                ": " +
+                                scheduleEntryToString(_steps[index], index),
+                            style: TextStyle(color: Colors.white)),
+                        leading: SizedBox(
+                            height: 30.0,
+                            width: 30.0, // fixed width and height
+                            child: transferItemToIcon(_steps[index])),
+                      ),
+                    );
+                  },
                 ),
+              ),
           ],
         ),
       ),
