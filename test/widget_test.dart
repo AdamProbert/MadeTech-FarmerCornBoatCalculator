@@ -11,16 +11,40 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_app/main.dart';
 
 void main() {
-  test('2 geese and x+1 corn is too many geese', () async {
-    num gooseCount = 2;
-    num cornCount = 2;
-    expect(tooManyGeese(gooseCount, cornCount), true);
+  test('1 corn and 1 goose can travel', () async {
+    num gooseCount = 1;
+    num cornCount = 1;
+    expect(validPassengers(gooseCount, cornCount), true);
   });
 
-  test('2 corn and x+1 geese is too much corn', () async {
+  test('2 geese and 1 corn can travel', () async {
+    num gooseCount = 2;
+    num cornCount = 1;
+    expect(validPassengers(gooseCount, cornCount), true);
+  });
+
+  test('2 corn and 1 goose can travel', () async {
+    num gooseCount = 1;
+    num cornCount = 2;
+    expect(validPassengers(gooseCount, cornCount), true);
+  });
+
+  test('2 corn and 2 geese cannot travel', () async {
     num gooseCount = 2;
     num cornCount = 2;
-    expect(tooManyGeese(gooseCount, cornCount), true);
+    expect(validPassengers(gooseCount, cornCount), false);
+  });
+
+  test('1 corn and >2 geese cannot travel', () async {
+    num gooseCount = 34;
+    num cornCount = 1;
+    expect(validPassengers(gooseCount, cornCount), true);
+  });
+
+  test('1 goose and >2 corn cannot travel', () async {
+    num gooseCount = 1;
+    num cornCount = 37;
+    expect(validPassengers(gooseCount, cornCount), true);
   });
 
   test('transport 56346 geese should cost', () async {
