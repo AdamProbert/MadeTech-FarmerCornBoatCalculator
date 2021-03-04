@@ -112,10 +112,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _costCalculated = false;
   num _cost = 0.0;
+  List<String> steps = [];
 
-  void _calculateTransportCost() {
+  void _updateTransportInformation() {
     setState(() {});
     this._costCalculated = false;
+    steps = [];
+
 
     int cornCount = intOrStringValue(cornCountTextController.text);
     int gooseCount = intOrStringValue(gooseCountTextController.text);
@@ -128,9 +131,55 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
+    _calculateTransportCost(gooseCount, cornCount);
+    _determineTransportSteps(gooseCount, cornCount);
+  }
+
+  void _calculateTransportCost(gooseCount, cornCount) {
+
     this._cost = calculateCost(gooseCount, cornCount);
     if (this._cost > 0) {
       this._costCalculated = true;
+    }
+  }
+
+  void _determineTransportSteps(gooseCount, cornCount) {
+
+    if ((cornCount == 1) & (gooseCount == 1)) {
+      steps = [
+        "Take goose",
+        "Return with nothing",
+        "Take corn"
+      ];
+      return;
+    }
+    else if((cornCount == 2) & (gooseCount == 1)) {
+      steps = [
+        "Take goose",
+        "Return with nothing",
+        "Take corn",
+        "Return with goose",
+        "Take corn",
+        "Return with nothing",
+        "Take goose"
+      ];
+      return;
+    }
+    else if((cornCount == 1) & (gooseCount == 2)) {
+      steps = [
+        "Take corn",
+        "Return with nothing",
+        "Take goose",
+        "Return with corn",
+        "Take goose",
+        "Return with nothing",
+        "Take corn"
+      ];
+      return;
+    }
+    else {
+      steps = ["UNKNOWN THING"];
+      return;
     }
   }
 
@@ -237,13 +286,22 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color(FarmerColors.dark_green),
               textColor: Colors.white,
               padding: EdgeInsets.all(8.0),
-              onPressed: _calculateTransportCost,
+              onPressed: _updateTransportInformation,
               child: Text(
                 "Calculate".toUpperCase(),
                 style: TextStyle(
                   fontSize: 14.0,
                 ),
               ),
+            ),
+            Expanded(
+                child: new ListView.builder
+                  (
+                    itemCount: steps.length,
+                    itemBuilder: (BuildContext ctxt, int Index) {
+                      return new Text(steps[Index]);
+                    }
+                ),
             ),
           ],
         ),
