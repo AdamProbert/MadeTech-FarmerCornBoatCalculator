@@ -305,12 +305,23 @@ class _MyHomePageState extends State<MyHomePage> {
                   )),
             ),
             Expanded(
-              child: new ListView.builder(
-                  itemCount: steps.length,
-                  itemBuilder: (BuildContext ctxt, int Index) {
-                    return new Text(steps[Index]);
-                  }),
-            ),
+                child: new ListView.builder
+                  (
+                    itemCount: steps.length,
+                    itemBuilder: (BuildContext ctxt, int index) {
+                      return Card(
+                        child: ListTile(
+                          title: Text((index+1).toString() + ": " + steps[index]),
+                            leading: SizedBox(
+                                height: 30.0,
+                                width: 30.0, // fixed width and height
+                                child: Image.asset("assets/images/grain.png")
+                            )
+                        ),
+                      );
+                    },
+                  ),
+                ),
           ],
         ),
       ),
