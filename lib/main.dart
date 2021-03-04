@@ -9,12 +9,17 @@ void main() {
 }
 
 final returnCost = 0.25;
+
 final cornCostPerTrip = 0.25;
 final cornPerTrip = 1;
+
 final gooseCostPerTrip = 0.25;
 final goosePerTrip = 1;
 
-final title = 'Morten Transport Cost Calculator';
+final rhinoCostPerTrip = 0.25;
+final rhinoPerTrip = 1;
+
+final title = 'Ferrynuff';
 
 final currencyFormatter = new NumberFormat("£#,##0.00", "en_GB");
 
@@ -23,16 +28,24 @@ int intOrStringValue(dynamic o) {
   return o ?? 0;
 }
 
-bool tooManyGeese(num gooseCount, num cornCount) {
-  return (gooseCount > 2 && cornCount > 0) || (gooseCount == 2 && cornCount == 2);
+bool tooManyGeese(num gooseCount, num cornCount, num rhinoCount) {
+  return (gooseCount > 2 && (cornCount > 0 || rhinoCount > 0)) || (gooseCount == 2 && (cornCount == 2 || rhinoCount == 2));
 }
 
 bool tooMuchCorn(num cornCount, num gooseCount) {
   return (cornCount > 2 && gooseCount > 0) || (gooseCount == 2 && cornCount == 2);
 }
 
-bool validPassengers(num cornCount, num gooseCount) {
-  return !tooManyGeese(gooseCount, cornCount) && !tooMuchCorn(cornCount, gooseCount);
+bool tooManyRhino(num rhinoCount, num gooseCount) {
+  return (rhinoCount > 2 && gooseCount > 0) || (gooseCount == 2 && rhinoCount == 2);
+}
+
+bool validPassengers(num cornCount, num gooseCount, num rhinoCount) {
+  if ((gooseCount > 0 && cornCount > 0 && rhinoCount > 0) && (cornCount > 1 || gooseCount > 1 || rhinoCount > 1)) {
+    return false;
+  }
+
+  return !tooManyGeese(gooseCount, cornCount, rhinoCount) && !tooMuchCorn(cornCount, gooseCount) && !tooManyRhino(rhinoCount, gooseCount);
 }
 
 num calculateGooseCost(num gooseCount) {
@@ -45,21 +58,74 @@ num calculateCornCost(num cornCount) {
   return ((cornTrips * cornCostPerTrip) + (cornTrips * returnCost));
 }
 
-num calculateCostSimple(gooseCount, cornCount) {
-  return calculateGooseCost(gooseCount) + calculateCornCost(cornCount);
+num calculateRhinoCost(num rhinoCount) {
+  num rhinoTrips = (rhinoCount / rhinoPerTrip).ceil();
+  return ((rhinoTrips * rhinoCostPerTrip) + (rhinoTrips * returnCost));
+}
+
+num calculateCostSimple(gooseCount, cornCount, rhinoCount) {
+  return calculateGooseCost(gooseCount) + calculateCornCost(cornCount) + calculateRhinoCost(rhinoCount);
 }
 
 Image getIcon(String step) {
-  if(step.contains("corn")){
+  if (step.contains("corn")) {
     return Image.asset("assets/images/grain.png");
   }
-  else if(step.contains("goose")){
+  else if (step.contains("goose")) {
     return Image.asset("assets/images/goose.png");
+  }
+  else if (step.contains("rhino")) {
+    return Image.asset("assets/images/rhino.png");
   }
   else if(step.contains("nothing")){
     return Image.asset(("assets/images/boat.png"));
   }
   return null;
+}
+
+enum TransferItem {
+  Nothing,
+  Corn,
+  Goose,
+  Rhino,
+  Farmer
+}
+
+String transferItemToString(TransferItem itemType) {
+  switch(itemType) {
+    case TransferItem.Nothing: return 'Nothing';
+    case TransferItem.Corn: return 'Corn';
+    case TransferItem.Goose: return 'Goose';
+    case TransferItem.Rhino: return 'Rhino';
+    case TransferItem.Farmer: return 'Farmer';
+    default: return 'Unknown';
+  }
+}
+
+Image transferItemToIcon(TransferItem itemType) {
+  switch(itemType) {
+    case TransferItem.Nothing: return Image.asset(("assets/images/boat.png"));
+    case TransferItem.Corn: return Image.asset("assets/images/grain.png");
+    case TransferItem.Goose: return Image.asset("assets/images/goose.png");
+    case TransferItem.Rhino: return Image.asset("assets/images/rhino.png");
+    case TransferItem.Farmer: return Image.asset("assets/images/farmer.png");
+    default: return Image.asset(("assets/images/boat.png"));
+  }
+}
+
+String scheduleEntryToString(TransferItem itemType, num index) {
+  if (itemType == TransferItem.Farmer) {
+    return 'Return from Market';
+  }
+
+  String prefix = '';
+  if((index % 2) > 0) {
+    prefix = 'Return with ';
+  }
+  else {
+    prefix = 'Take ';
+  }
+  return prefix + transferItemToString(itemType);
 }
 
 Map<int, Color> color = {
@@ -131,59 +197,137 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final cornCountTextController = TextEditingController();
   final gooseCountTextController = TextEditingController();
+  final rhinoCountTextController = TextEditingController();
 
   num _cost = 0.0;
-  List<String> steps = [];
+  List<TransferItem> _steps = [];
 
   void _updateTransportInformation() {
     setState(() {});
-    steps = [];
+    _steps = [];
 
     int cornCount = intOrStringValue(cornCountTextController.text);
     int gooseCount = intOrStringValue(gooseCountTextController.text);
+    int rhinoCount = intOrStringValue(rhinoCountTextController.text);
 
-    if (!validPassengers(cornCount, gooseCount)) {
-      this._showErrorMessage(tooManyGeese(gooseCount, cornCount), tooMuchCorn(cornCount, gooseCount));
+    if (!validPassengers(cornCount, gooseCount, rhinoCount)) {
+      this._showErrorMessage(cornCount, gooseCount, rhinoCount);
       return;
     }
 
-    this._cost = calculateCostSimple(gooseCount, cornCount);
-    _determineTransportSteps(gooseCount, cornCount);
+    this._cost = calculateCostSimple(gooseCount, cornCount, rhinoCount);
+    _determineTransportSteps(gooseCount, cornCount, rhinoCount);
   }
 
-  void _determineTransportSteps(gooseCount, cornCount) {
-    if ((cornCount == 1) & (gooseCount == 1)) {
-      steps = ["Take goose", "Return with nothing", "Take corn"];
-      this._cost = 1;
-      return;
-    } else if ((cornCount == 2) & (gooseCount == 1)) {
-      steps = [
-        "Take goose",
-        "Return with nothing",
-        "Take corn",
-        "Return with goose",
-        "Take corn",
-        "Return with nothing",
-        "Take goose"
+  void _resetDisplay() {
+    _cost = 0;
+    _steps = [];
+  }
+
+  void _determineTransportSteps(gooseCount, cornCount, rhinoCount) {
+    if ((cornCount == 1) & (gooseCount == 1) & (rhinoCount == 0)) {
+      _steps = [
+        TransferItem.Goose,
+        TransferItem.Nothing,
+        TransferItem.Corn,
+        TransferItem.Farmer
       ];
-      this._cost = 2;
+      _cost = 1;
       return;
-    } else if ((cornCount == 1) & (gooseCount == 2)) {
-      steps = [
-        "Take corn",
-        "Return with nothing",
-        "Take goose",
-        "Return with corn",
-        "Take goose",
-        "Return with nothing",
-        "Take corn"
+    } else if ((cornCount == 2) & (gooseCount == 1) & (rhinoCount == 0)) {
+      _steps = [
+        TransferItem.Goose,
+        TransferItem.Nothing,
+        TransferItem.Corn,
+        TransferItem.Goose,
+        TransferItem.Corn,
+        TransferItem.Nothing,
+        TransferItem.Goose,
+        TransferItem.Farmer
       ];
-      this._cost = 2;
+      _cost = 2;
       return;
+    } else if ((cornCount == 1) & (gooseCount == 2) & (rhinoCount == 0)) {
+      _steps = [
+        TransferItem.Corn,
+        TransferItem.Nothing,
+        TransferItem.Goose,
+        TransferItem.Corn,
+        TransferItem.Goose,
+        TransferItem.Nothing,
+        TransferItem.Corn,
+        TransferItem.Farmer
+      ];
+      _cost = 2;
+      return;
+    } else if ((cornCount == 0) & (gooseCount == 1) & (rhinoCount == 1)) {
+      _steps = [
+        TransferItem.Goose,
+        TransferItem.Nothing,
+        TransferItem.Rhino,
+        TransferItem.Farmer
+      ];
+      _cost = 1;
+      return;
+    } else if ((cornCount == 0) & (gooseCount == 2) & (rhinoCount == 1)) {
+      _steps = [
+        TransferItem.Rhino,
+        TransferItem.Nothing,
+        TransferItem.Goose,
+        TransferItem.Rhino,
+        TransferItem.Goose,
+        TransferItem.Nothing,
+        TransferItem.Rhino,
+        TransferItem.Farmer
+      ];
+      _cost = 2;
+      return;
+    } else if ((cornCount == 0) & (gooseCount == 1) & (rhinoCount == 2)) {
+      _steps = [
+        TransferItem.Goose,
+        TransferItem.Nothing,
+        TransferItem.Rhino,
+        TransferItem.Goose,
+        TransferItem.Rhino,
+        TransferItem.Nothing,
+        TransferItem.Goose,
+        TransferItem.Farmer
+      ];
+      _cost = 2;
+      return;
+    } else if ((gooseCount == 1) && (cornCount == 1) && (rhinoCount == 1)) {
+      _steps = [
+        TransferItem.Goose,
+        TransferItem.Nothing,
+        TransferItem.Rhino,
+        TransferItem.Goose,
+        TransferItem.Corn,
+        TransferItem.Nothing,
+        TransferItem.Rhino,
+        TransferItem.Farmer
+      ];
+      _cost = 2;
     }
   }
 
-  Future<void> _showErrorMessage(bool tooManyGeese, bool tooMuchCorn) async {
+  Future<void> _showErrorMessage(num cornCount, num gooseCount, num rhinoCount) async {
+    String text = '';
+    if ((gooseCount > 0 && cornCount > 0 && rhinoCount > 0) && (cornCount > 1 || gooseCount > 1 || rhinoCount > 1)) {
+      text = 'You can only take 1 of each Goose, Cron and Rhino when taken together';
+    }
+    else if (tooManyGeese(gooseCount, cornCount, rhinoCount)) {
+      text = 'You have too many Geese in your party';
+    }
+    else if (tooMuchCorn(cornCount, gooseCount)) {
+      text = 'You have too much Corn in your party';
+    }
+    else if (tooManyRhino(rhinoCount, gooseCount)) {
+      text = 'The angry Rhrino(s) does not like your Geese';
+    }
+    else {
+      text = 'Something has gone wrong';
+    }
+
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -193,8 +337,7 @@ class _MyHomePageState extends State<MyHomePage> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                if (tooManyGeese) Text('Too many Geese vs Corn'),
-                if (tooMuchCorn) Text('Too much Corn vs Geese')
+                Text(text)
               ],
             ),
           ),
@@ -278,6 +421,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     style: Theme.of(context).textTheme.headline5,
+                    onChanged: (String fieldText) {
+                      this._resetDisplay();
+                    },
                   ),
                 ),
                 SizedBox(
@@ -293,6 +439,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     style: Theme.of(context).textTheme.headline5,
+                    onChanged: (String fieldText) {
+                      this._resetDisplay();
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: 20.0,
+                ),
+                new Flexible(
+                  child: TextField(
+                    controller: rhinoCountTextController,
+                    decoration: InputDecoration(
+                      // hintText: 'Number of geese',
+                      labelText: 'Rhino',
+                    ),
+                    keyboardType: TextInputType.number,
+                    style: Theme.of(context).textTheme.headline5,
+                    onChanged: (String fieldText) {
+                      this._resetDisplay();
+                    },
                   ),
                 ),
                 SizedBox(
@@ -317,16 +483,16 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
                 child: new ListView.builder
                   (
-                    itemCount: steps.length,
+                    itemCount: _steps.length,
                     itemBuilder: (BuildContext ctxt, int index) {
                       return Card(
                         color: (index % 2 == 0) ? Color(FarmerColors.orange) : Color(FarmerColors.dark_green),
                         child: ListTile(
-                          title: Text((index+1).toString() + ": " + steps[index], style: TextStyle(color: Colors.white)),
+                          title: Text((index+1).toString() + ": " + scheduleEntryToString(_steps[index], index), style: TextStyle(color: Colors.white)),
                             leading: SizedBox(
                                 height: 30.0,
                                 width: 30.0, // fixed width and height
-                                child: getIcon(steps[index])
+                                child: transferItemToIcon(_steps[index])
                             ),
                         ),
                       );
