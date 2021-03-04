@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -275,6 +276,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       labelText: 'Corn',
                     ),
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
@@ -289,6 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       labelText: 'Geese',
                     ),
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
