@@ -56,6 +56,9 @@ Image getIcon(String step) {
   else if(step.contains("goose")){
     return Image.asset("assets/images/goose.png");
   }
+  else if(step.contains("nothing")){
+    return Image.asset(("assets/images/boat.png"));
+  }
   return null;
 }
 
@@ -313,8 +316,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemCount: steps.length,
                     itemBuilder: (BuildContext ctxt, int index) {
                       return Card(
+                        color: (index % 2 == 0) ? Color(FarmerColors.orange) : Color(FarmerColors.dark_green),
                         child: ListTile(
-                          title: Text((index+1).toString() + ": " + steps[index]),
+                          title: Text((index+1).toString() + ": " + steps[index], style: TextStyle(color: Colors.white)),
                             leading: SizedBox(
                                 height: 30.0,
                                 width: 30.0, // fixed width and height
