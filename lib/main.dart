@@ -117,13 +117,11 @@ class _MyHomePageState extends State<MyHomePage> {
   final cornCountTextController = TextEditingController();
   final gooseCountTextController = TextEditingController();
 
-  bool _costCalculated = false;
   num _cost = 0.0;
   List<String> steps = [];
 
   void _updateTransportInformation() {
     setState(() {});
-    this._costCalculated = false;
     steps = [];
 
     int cornCount = intOrStringValue(cornCountTextController.text);
@@ -134,20 +132,14 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    _calculateTransportCost(gooseCount, cornCount);
-    _determineTransportSteps(gooseCount, cornCount);
-  }
-
-  void _calculateTransportCost(gooseCount, cornCount) {
     this._cost = calculateCostSimple(gooseCount, cornCount);
-    if (this._cost > 0) {
-      this._costCalculated = true;
-    }
+    _determineTransportSteps(gooseCount, cornCount);
   }
 
   void _determineTransportSteps(gooseCount, cornCount) {
     if ((cornCount == 1) & (gooseCount == 1)) {
       steps = ["Take goose", "Return with nothing", "Take corn"];
+      this._cost = 1;
       return;
     } else if ((cornCount == 2) & (gooseCount == 1)) {
       steps = [
@@ -159,6 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "Return with nothing",
         "Take goose"
       ];
+      this._cost = 2;
       return;
     } else if ((cornCount == 1) & (gooseCount == 2)) {
       steps = [
@@ -170,6 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "Return with nothing",
         "Take corn"
       ];
+      this._cost = 2;
       return;
     } else {
       steps = ["UNKNOWN THING"];
@@ -249,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            if (this._costCalculated)
+            if (this._cost > 0)
               Text(
                 'Travel Cost: \n${currencyFormatter.format(this._cost)}',
                 style: Theme.of(context).textTheme.headline5,
