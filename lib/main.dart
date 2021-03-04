@@ -12,7 +12,9 @@ final cornCostPerTrip = 0.25;
 final cornPerTrip = 1;
 final gooseCostPerTrip = 0.25;
 final goosePerTrip = 1;
+
 final title = 'Morten Transport Cost Calculator';
+
 final currencyFormatter = new NumberFormat("£#,##0.00", "en_GB");
 
 int intOrStringValue(dynamic o) {
@@ -21,11 +23,16 @@ int intOrStringValue(dynamic o) {
 }
 
 bool tooManyGeese(num gooseCount, num cornCount) {
-  return (gooseCount >= 2 && cornCount > 0);
+  return (gooseCount > 1 && cornCount != 1);
 }
 
 bool tooMuchCorn(num cornCount, num gooseCount) {
-  return (cornCount >= 2 && gooseCount > 0);
+  return (cornCount > 1 && gooseCount != 1);
+}
+
+bool validPassengers(num cornCount, num gooseCount) {
+  return !tooManyGeese(gooseCount, cornCount) &&
+      !tooMuchCorn(cornCount, gooseCount);
 }
 
 num calculateGooseCost(num gooseCount) {
@@ -38,7 +45,7 @@ num calculateCornCost(num cornCount) {
   return ((cornTrips * cornCostPerTrip) + (cornTrips * returnCost));
 }
 
-num calculateCost(gooseCount, cornCount) {
+num calculateCostSimple(gooseCount, cornCount) {
   return calculateGooseCost(gooseCount) + calculateCornCost(cornCount);
 }
 
@@ -122,50 +129,31 @@ class _MyHomePageState extends State<MyHomePage> {
   final cornCountTextController = TextEditingController();
   final gooseCountTextController = TextEditingController();
 
-  bool _costCalculated = false;
   num _cost = 0.0;
   List<String> steps = [];
 
   void _updateTransportInformation() {
     setState(() {});
-    this._costCalculated = false;
     steps = [];
-
 
     int cornCount = intOrStringValue(cornCountTextController.text);
     int gooseCount = intOrStringValue(gooseCountTextController.text);
 
-    bool tooManyGeeseResult = tooManyGeese(gooseCount, cornCount);
-    bool tooMuchCornResult =  tooMuchCorn(cornCount, gooseCount);
-
-    if (tooManyGeeseResult || tooMuchCornResult) {
-      this._showMyDialog(tooManyGeeseResult, tooMuchCornResult);
+    if (!validPassengers(cornCount, gooseCount)) {
+      this._showErrorMessage();
       return;
     }
 
-    _calculateTransportCost(gooseCount, cornCount);
+    this._cost = calculateCostSimple(gooseCount, cornCount);
     _determineTransportSteps(gooseCount, cornCount);
   }
 
-  void _calculateTransportCost(gooseCount, cornCount) {
-
-    this._cost = calculateCost(gooseCount, cornCount);
-    if (this._cost > 0) {
-      this._costCalculated = true;
-    }
-  }
-
   void _determineTransportSteps(gooseCount, cornCount) {
-
     if ((cornCount == 1) & (gooseCount == 1)) {
-      steps = [
-        "Take goose",
-        "Return with nothing",
-        "Take corn"
-      ];
+      steps = ["Take goose", "Return with nothing", "Take corn"];
+      this._cost = 1;
       return;
-    }
-    else if((cornCount == 2) & (gooseCount == 1)) {
+    } else if ((cornCount == 2) & (gooseCount == 1)) {
       steps = [
         "Take goose",
         "Return with nothing",
@@ -175,9 +163,9 @@ class _MyHomePageState extends State<MyHomePage> {
         "Return with nothing",
         "Take goose"
       ];
+      this._cost = 2;
       return;
-    }
-    else if((cornCount == 1) & (gooseCount == 2)) {
+    } else if ((cornCount == 1) & (gooseCount == 2)) {
       steps = [
         "Take corn",
         "Return with nothing",
@@ -187,15 +175,15 @@ class _MyHomePageState extends State<MyHomePage> {
         "Return with nothing",
         "Take corn"
       ];
+      this._cost = 2;
       return;
-    }
-    else {
+    } else {
       steps = ["UNKNOWN THING"];
       return;
     }
   }
 
-  Future<void> _showMyDialog(bool tooManyGeese, bool tooMuchCorn) async {
+  Future<void> _showErrorMessage() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -205,8 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                if (tooManyGeese) Text('You have too many Geese vs Corn'),
-                if (tooMuchCorn) Text('You have too much Corn vs Geese'),
+                Text('You have too many Geese vs Corn'),
               ],
             ),
           ),
@@ -268,28 +255,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            if (this._costCalculated)
+            if (this._cost > 0)
               Text(
-                'Travel Cost: ${currencyFormatter.format(this._cost)}',
-                style: Theme.of(context).textTheme.headline4,
+                'Travel Cost: \n${currencyFormatter.format(this._cost)}',
+                style: Theme.of(context).textTheme.headline5,
+                textAlign: TextAlign.center,
               ),
-            TextField(
-              controller: cornCountTextController,
-              decoration: InputDecoration(
-                hintText: 'Number of corn bags',
-                labelText: 'Corn',
-              ),
-              keyboardType: TextInputType.number,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            TextField(
-              controller: gooseCountTextController,
-              decoration: InputDecoration(
-                hintText: 'Number of geese',
-                labelText: 'Geese',
-              ),
-              keyboardType: TextInputType.number,
-              style: Theme.of(context).textTheme.headline4,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                SizedBox(
+                  width: 10.0,
+                ),
+                new Flexible(
+                  child: TextField(
+                    controller: cornCountTextController,
+                    decoration: InputDecoration(
+                      // hintText: 'Number of corn bags',
+                      labelText: 'Corn',
+                    ),
+                    keyboardType: TextInputType.number,
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                ),
+                SizedBox(
+                  width: 20.0,
+                ),
+                new Flexible(
+                  child: TextField(
+                    controller: gooseCountTextController,
+                    decoration: InputDecoration(
+                      // hintText: 'Number of geese',
+                      labelText: 'Geese',
+                    ),
+                    keyboardType: TextInputType.number,
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
+              ],
             ),
             FlatButton(
               shape: RoundedRectangleBorder(
@@ -299,12 +305,10 @@ class _MyHomePageState extends State<MyHomePage> {
               textColor: Colors.white,
               padding: EdgeInsets.all(8.0),
               onPressed: _updateTransportInformation,
-              child: Text(
-                "Calculate".toUpperCase(),
-                style: TextStyle(
-                  fontSize: 14.0,
-                ),
-              ),
+              child: Text("Calculate".toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 20.0,
+                  )),
             ),
             Expanded(
                 child: new ListView.builder
