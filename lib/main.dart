@@ -29,7 +29,8 @@ bool tooMuchCorn(num cornCount, num gooseCount) {
 }
 
 bool validPassengers(num cornCount, num gooseCount) {
-  return !tooManyGeese(gooseCount, cornCount) && !tooMuchCorn(cornCount, gooseCount);
+  return !tooManyGeese(gooseCount, cornCount) &&
+      !tooMuchCorn(cornCount, gooseCount);
 }
 
 num calculateGooseCost(num gooseCount) {
@@ -64,7 +65,7 @@ class FarmerColors {
   static const orange = 0xffe35922;
   static const brown = 0xff755E54;
   static const red = 0xffDB464B;
-  static const dark_green = 0xffDB464B;
+  static const dark_green = 0xff55A825;
 }
 
 class MyApp extends StatelessWidget {
@@ -118,26 +119,65 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _costCalculated = false;
   num _cost = 0.0;
+  List<String> steps = [];
 
-  void _calculateTransportCost() {
+  void _updateTransportInformation() {
     setState(() {});
     this._costCalculated = false;
+    steps = [];
 
     int cornCount = intOrStringValue(cornCountTextController.text);
     int gooseCount = intOrStringValue(gooseCountTextController.text);
 
     if (!validPassengers(cornCount, gooseCount)) {
-      this._showMyDialog();
+      this._showErrorMessage();
       return;
     }
 
+    _calculateTransportCost(gooseCount, cornCount);
+    _determineTransportSteps(gooseCount, cornCount);
+  }
+
+  void _calculateTransportCost(gooseCount, cornCount) {
     this._cost = calculateCostSimple(gooseCount, cornCount);
     if (this._cost > 0) {
       this._costCalculated = true;
     }
   }
 
-  Future<void> _showMyDialog() async {
+  void _determineTransportSteps(gooseCount, cornCount) {
+    if ((cornCount == 1) & (gooseCount == 1)) {
+      steps = ["Take goose", "Return with nothing", "Take corn"];
+      return;
+    } else if ((cornCount == 2) & (gooseCount == 1)) {
+      steps = [
+        "Take goose",
+        "Return with nothing",
+        "Take corn",
+        "Return with goose",
+        "Take corn",
+        "Return with nothing",
+        "Take goose"
+      ];
+      return;
+    } else if ((cornCount == 1) & (gooseCount == 2)) {
+      steps = [
+        "Take corn",
+        "Return with nothing",
+        "Take goose",
+        "Return with corn",
+        "Take goose",
+        "Return with nothing",
+        "Take corn"
+      ];
+      return;
+    } else {
+      steps = ["UNKNOWN THING"];
+      return;
+    }
+  }
+
+  Future<void> _showErrorMessage() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -218,9 +258,11 @@ class _MyHomePageState extends State<MyHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                SizedBox(width: 10.0,),
+                SizedBox(
+                  width: 10.0,
+                ),
                 new Flexible(
-                  child:             TextField(
+                  child: TextField(
                     controller: cornCountTextController,
                     decoration: InputDecoration(
                       // hintText: 'Number of corn bags',
@@ -230,7 +272,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
-                SizedBox(width: 20.0,),
+                SizedBox(
+                  width: 20.0,
+                ),
                 new Flexible(
                   child: TextField(
                     controller: gooseCountTextController,
@@ -242,23 +286,30 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
-                SizedBox(width: 10.0,),
+                SizedBox(
+                  width: 10.0,
+                ),
               ],
             ),
             FlatButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
-                  side: BorderSide(color: Colors.green)),
-              color: Colors.green,
+                  side: BorderSide(color: Color(FarmerColors.dark_green))),
+              color: Color(FarmerColors.dark_green),
               textColor: Colors.white,
               padding: EdgeInsets.all(8.0),
-              onPressed: _calculateTransportCost,
-              child: Text(
-                "Calculate".toUpperCase(),
-                style: TextStyle(
-                  fontSize: 20.0,
-                )
-              ),
+              onPressed: _updateTransportInformation,
+              child: Text("Calculate".toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 20.0,
+                  )),
+            ),
+            Expanded(
+              child: new ListView.builder(
+                  itemCount: steps.length,
+                  itemBuilder: (BuildContext ctxt, int Index) {
+                    return new Text(steps[Index]);
+                  }),
             ),
           ],
         ),
