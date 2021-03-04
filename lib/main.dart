@@ -177,9 +177,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ];
       this._cost = 2;
       return;
-    } else {
-      steps = ["UNKNOWN THING"];
-      return;
     }
   }
 
