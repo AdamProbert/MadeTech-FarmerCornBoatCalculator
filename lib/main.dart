@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -38,6 +40,16 @@ num calculateCornCost(num cornCount) {
 
 num calculateCost(gooseCount, cornCount) {
   return calculateGooseCost(gooseCount) + calculateCornCost(cornCount);
+}
+
+Image getIcon(String step) {
+  if(step.contains("corn")){
+    return Image.asset("assets/images/grain.png");
+  }
+  else if(step.contains("goose")){
+    return Image.asset("assets/images/goose.png");
+  }
+  return null;
 }
 
 Map<int, Color> color = {
@@ -305,7 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             leading: SizedBox(
                                 height: 30.0,
                                 width: 30.0, // fixed width and height
-                                child: Image.asset("assets/images/grain.png")
+                                child: getIcon(steps[index])
                             )
                         ),
                       );
