@@ -47,6 +47,8 @@ flutter:
     - assets/images/grain.png
     - assets/images/boat.png
     - assets/images/rhino.png
+    - assets/images/swaying-corn.gif
+    - assets/images/banner.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -251,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   image: new DecorationImage(
                       fit: BoxFit.fitWidth,
                       alignment: FractionalOffset.topCenter,
-                      image: new AssetImage('assets/images/Wheat.jpg')),
+                      image: new AssetImage('assets/images/banner.png')),
                 ),
               ),
             ),
