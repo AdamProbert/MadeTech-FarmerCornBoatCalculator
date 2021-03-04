@@ -128,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
     int gooseCount = intOrStringValue(gooseCountTextController.text);
 
     if (!validPassengers(cornCount, gooseCount)) {
-      this._showErrorMessage();
+      this._showErrorMessage(tooManyGeese(gooseCount, cornCount), tooMuchCorn(cornCount, gooseCount));
       return;
     }
 
@@ -171,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _showErrorMessage() async {
+  Future<void> _showErrorMessage(bool tooManyGeese, bool tooMuchCorn) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -181,7 +181,8 @@ class _MyHomePageState extends State<MyHomePage> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('You have too many Geese vs Corn'),
+                if (tooManyGeese) Text('Too many Geese vs Corn'),
+                if (tooMuchCorn) Text('Too much Corn vs Geese')
               ],
             ),
           ),
