@@ -31,7 +31,7 @@ class FarmerColors {
   static const orange = 0xffe35922;
   static const brown = 0xff755E54;
   static const red = 0xffDB464B;
-  static const dark_green = 0xffDB464B;
+  static const dark_green = 0xff55A825;
 }
 
 class MyApp extends StatelessWidget {
@@ -201,8 +201,8 @@ class _MyHomePageState extends State<MyHomePage> {
             FlatButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
-                  side: BorderSide(color: Colors.green)),
-              color: Colors.green,
+                  side: BorderSide(color: Color(FarmerColors.dark_green))),
+              color: Color(FarmerColors.dark_green),
               textColor: Colors.white,
               padding: EdgeInsets.all(8.0),
               onPressed: _calculateTransportCost,
