@@ -266,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 SizedBox(
-                  width: 10.0,
+                  width: 20.0,
                 ),
                 new Flexible(
                   child: TextField(
@@ -296,13 +296,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 SizedBox(
-                  width: 10.0,
+                  width: 20.0,
                 ),
               ],
             ),
             FlatButton(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(5.0),
                   side: BorderSide(color: Color(FarmerColors.dark_green))),
               color: Color(FarmerColors.dark_green),
               textColor: Colors.white,
@@ -327,7 +327,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 height: 30.0,
                                 width: 30.0, // fixed width and height
                                 child: getIcon(steps[index])
-                            )
+                            ),
                         ),
                       );
                     },
