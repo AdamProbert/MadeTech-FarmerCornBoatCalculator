@@ -23,16 +23,15 @@ int intOrStringValue(dynamic o) {
 }
 
 bool tooManyGeese(num gooseCount, num cornCount) {
-  return (gooseCount > 1 && cornCount != 1);
+  return (gooseCount > 2 && cornCount > 0) || (gooseCount == 2 && cornCount == 2);
 }
 
 bool tooMuchCorn(num cornCount, num gooseCount) {
-  return (cornCount > 1 && gooseCount != 1);
+  return (cornCount > 2 && gooseCount > 0) || (gooseCount == 2 && cornCount == 2);
 }
 
 bool validPassengers(num cornCount, num gooseCount) {
-  return !tooManyGeese(gooseCount, cornCount) &&
-      !tooMuchCorn(cornCount, gooseCount);
+  return !tooManyGeese(gooseCount, cornCount) && !tooMuchCorn(cornCount, gooseCount);
 }
 
 num calculateGooseCost(num gooseCount) {

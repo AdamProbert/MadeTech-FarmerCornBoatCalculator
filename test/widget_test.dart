@@ -11,38 +11,94 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_app/main.dart';
 
 void main() {
-  test('1 corn and 1 goose can travel', () async {
+  group('1:1', () {
     num gooseCount = 1;
     num cornCount = 1;
-    expect(validPassengers(gooseCount, cornCount), true);
+
+    test('not too much corn', () async {
+      expect(tooMuchCorn(cornCount, gooseCount), false);
+    });
+
+    test('not too many geese', () async {
+      expect(tooManyGeese(gooseCount, cornCount), false);
+    });
+
+    test('is valid passengers', () async {
+      expect(validPassengers(cornCount, gooseCount), true);
+    });
   });
 
-  test('2 geese and 1 corn can travel', () async {
+  group('2:1 geese vs corn', () {
     num gooseCount = 2;
     num cornCount = 1;
-    expect(validPassengers(gooseCount, cornCount), true);
+
+    test('not too much corn', () async {
+      expect(tooMuchCorn(cornCount, gooseCount), false);
+    });
+
+    test('not too many geese', () async {
+      expect(tooManyGeese(gooseCount, cornCount), false);
+    });
+
+    test('is valid passengers', () async {
+      expect(validPassengers(cornCount, gooseCount), true);
+    });
   });
 
-  test('2 corn and 1 goose can travel', () async {
+  group('2:1 corn vs geese', () {
     num gooseCount = 1;
     num cornCount = 2;
-    expect(validPassengers(gooseCount, cornCount), true);
+
+    test('not too much corn', () async {
+      expect(tooMuchCorn(cornCount, gooseCount), false);
+    });
+
+    test('not too many geese', () async {
+      expect(tooManyGeese(gooseCount, cornCount), false);
+    });
+
+    test('is valid passengers', () async {
+      expect(validPassengers(cornCount, gooseCount), true);
+    });
   });
 
-  test('2 corn and 2 geese cannot travel', () async {
+  group('2:2', () {
     num gooseCount = 2;
     num cornCount = 2;
-    expect(validPassengers(gooseCount, cornCount), false);
+
+    test('not too much corn', () async {
+      expect(tooMuchCorn(cornCount, gooseCount), true);
+    });
+
+    test('not too many geese', () async {
+      expect(tooManyGeese(gooseCount, cornCount), true);
+    });
+
+    test('is valid passengers', () async {
+      expect(validPassengers(cornCount, gooseCount), false);
+    });
   });
 
   test('1 corn and >2 geese cannot travel', () async {
     num gooseCount = 34;
     num cornCount = 1;
-    expect(validPassengers(gooseCount, cornCount), true);
+    expect(validPassengers(gooseCount, cornCount), false);
   });
 
   test('1 goose and >2 corn cannot travel', () async {
     num gooseCount = 1;
+    num cornCount = 37;
+    expect(validPassengers(gooseCount, cornCount), false);
+  });
+
+  test('0 corn and >1 geese cannot travel', () async {
+    num gooseCount = 34;
+    num cornCount = 0;
+    expect(validPassengers(gooseCount, cornCount), true);
+  });
+
+  test('0 goose and >1 corn cannot travel', () async {
+    num gooseCount = 0;
     num cornCount = 37;
     expect(validPassengers(gooseCount, cornCount), true);
   });
